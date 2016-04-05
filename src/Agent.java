@@ -21,14 +21,18 @@ public class Agent {
 	
 	private int[][] gameMatrix = new int[][] {{1,0}, 
 			  								  {0,5}};
+//	private int[][] gameMatrix = new int[][] {{0,3}, 
+//			  								  {3,0}};
+	
+	private static final int NUM_PAST_ACTIONS_CONSIDERED = 10;
 	
 	
 	private int myId;
+	private double discountFactor;
 	
-	private static final double DISCOUNT = 0.90; 
-	
-	public Agent(int id){
+	public Agent(int id, double discount){
 		myId = id;
+		discountFactor = discount;
 		myInformationSet = new ArrayList<Agent>();
 		myInteractionSet = new ArrayList<Agent>();
 		myPastActions = new ArrayList<Integer>();
@@ -36,7 +40,9 @@ public class Agent {
 	}
 	
 	public void chooseNewAction(){
-		myCurrentAction = IMHistory();
+		myCurrentAction = IMHistory(discountFactor);
+		//myCurrentAction = IM();
+		//myCurrentAction = BR(.5);
 	}
 	
 	public void interactWithAllNeighbors(){
@@ -91,21 +97,21 @@ public class Agent {
 	}
 	
 	private int IM(){
-		return 0;
+		return IMHistory(0.0);
 	}
 	
 	
 	
-	private int IMHistory(){
+	private int IMHistory(double discount){
 		Map<Integer, Double> neighborsActions = new HashMap<Integer, Double>();
 		Map<Integer, Double> neighborsActionsCount = new HashMap<Integer, Double>();
 		for(Agent a : myInformationSet){
 			
-			//look at last 5 choices
-			for(int j = 0; j < 5; j++){
+			//look at last choices
+			for(int j = 0; j < NUM_PAST_ACTIONS_CONSIDERED; j++){
 				
 				int action = a.myPastActions.get( a.myPastActions.size() - 1 - j);
-				double result = Math.pow(DISCOUNT, j) *  a.myPastOutcomes.get(a.myPastOutcomes.size() - 1 - j);
+				double result = Math.pow(discount, j) *  a.myPastOutcomes.get(a.myPastOutcomes.size() - 1 - j);
 				
 				if(!neighborsActions.containsKey(action)){
 					neighborsActions.put(action, result);
