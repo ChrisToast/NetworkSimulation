@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 
 public class Simulation {
 	
@@ -16,13 +19,14 @@ public class Simulation {
 	
 	private final static int NUM_STEPS = 1000;
 	private static final int NUM_AGENTS = 100;
-	private static final int NUM_SIMS = 200;
+	private static final int NUM_SIMS = 1;
 	
 	private static final double CONNECT_PROB_INFO = 0.2;
 	private static final double CONNECT_PROB_INTER = 0.2;
 	
-	private static final double PROB_ONE_START = 0.2;
-	private static final double DISCOUNT_FACTOR = 0.0;
+	private static final double PROB_ONE_START = 0.5;
+	
+	private double discount_factor = 0.0;
 	
 	private Random r = new Random();
 	
@@ -30,13 +34,30 @@ public class Simulation {
 	private static final String FILENAME_INFO = "infoRandom.txt";
 	private static final String FILENAME_INTER = "interRandom.txt";
 	private List<Agent> myAgentList;
+	private Grapher myGrapher;
 	
-	public static void main(String[] args){
-		Simulation s = new Simulation();
-		s.generateRandomGraph(FILENAME_INFO, NUM_AGENTS, true);
-		s.generateRandomGraph(FILENAME_INTER, NUM_AGENTS, false);
-		s.setup();
-		s.run();
+	public void go(){
+		myGrapher = new Grapher();
+		generateRandomGraph(FILENAME_INFO, NUM_AGENTS, true);
+		generateRandomGraph(FILENAME_INTER, NUM_AGENTS, false);
+		
+//		for(discount_factor = 0; discount_factor <= 1.0; discount_factor += 0.01){
+//			run();
+//		}
+//		discount_factor = 1.0;
+//		run();
+
+		
+		//TODO graph individual simulations
+		run();
+		
+		
+		Stage stage = new Stage();
+		Scene scene = myGrapher.graph();
+		stage.setScene(scene);
+		stage.show();
+		
+		
 	}
 	
 	private void setup(){
@@ -61,7 +82,7 @@ public class Simulation {
 		
 		List<Agent> agents = new ArrayList<Agent>();
 		for(int i = 0; i < numAgents; i++){
-			agents.add(new Agent(i, DISCOUNT_FACTOR));
+			agents.add(new Agent(i, discount_factor));
 		}
 		
 		for(int i = 0; i < adjacencies.size(); i++){
@@ -90,10 +111,15 @@ public class Simulation {
 		double stepEndedAt = 0;
 		
 		for(int i = 0; i < NUM_SIMS; i++){
+			setup();
 			stepEndedAt += runOneSimulation();
 		}
 		
-		System.out.println("Average step ended at: " + stepEndedAt / NUM_SIMS);
+		double avgStepEndedAt = stepEndedAt / NUM_SIMS;
+		
+		//myGrapher.addDataPoint(discount_factor, avgStepEndedAt);
+		
+		System.out.println("Discount: " + this.discount_factor + " Average step ended at: " + avgStepEndedAt);
 	}
 	
 	
@@ -159,6 +185,13 @@ public class Simulation {
 				}
 			}
 			double percentOnes = numOne / myAgentList.size();
+			
+			
+			myGrapher.addDataPoint(i, percentOnes);
+			
+			
+			
+			
 			//System.out.println("% 1 : " + percentOnes);
 			if(percentOnes == 1.0){
 				//System.out.println("Stopped with all ones at step " + i);

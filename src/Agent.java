@@ -19,10 +19,21 @@ public class Agent {
 	
 	private int myGroup; //TODO
 	
-	private int[][] gameMatrix = new int[][] {{1,0}, 
-			  								  {0,5}};
-//	private int[][] gameMatrix = new int[][] {{0,3}, 
-//			  								  {3,0}};
+//	private int[][] gameMatrix = new int[][] {{1,0}, 
+//			  								  {0,5}};
+			  								  
+	private int[][] gameMatrix = new int[][] {{0,10}, 
+			  								  {10,7}}; //lower bottom right # and the end state will hover around a smaller number....linear relationship????
+			  								  
+			  								 
+	
+//	private int[][] gameMatrix = new int[][] {{0,1}, 
+//	  										  {-1,0}};
+			  								  
+//	private int[][] gameMatrix = new int[][] {{0,1}, 
+//				  						      {1,0}};	
+	
+			  							
 	
 	private static final int NUM_PAST_ACTIONS_CONSIDERED = 10;
 	
