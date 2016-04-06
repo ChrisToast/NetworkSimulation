@@ -16,7 +16,7 @@ public class Grapher {
 	
     public Scene graph() {
         //defining the axes
-        final NumberAxis xAxis = new NumberAxis(0,1000,50);
+        final NumberAxis xAxis = new NumberAxis(0,10000,500);
         final NumberAxis yAxis = new NumberAxis(0,1,.1);
         xAxis.setLabel("Update #");
         yAxis.setLabel("Proportion of agents playing 1");

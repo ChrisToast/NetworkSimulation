@@ -23,7 +23,7 @@ public class Agent {
 //			  								  {0,5}};
 			  								  
 	private int[][] gameMatrix = new int[][] {{0,10}, 
-			  								  {10,7}}; //lower bottom right # and the end state will hover around a smaller number....linear relationship????
+			  								  {10,2}}; //lower bottom right # and the end state will hover around a smaller number....linear relationship????
 			  								  
 			  								 
 	
@@ -147,13 +147,22 @@ public class Agent {
 		
 		//find best
 		int curBestAction = 0;
-		double curBestOutcome = -1;
+		double curBestOutcome = 0;
 		for(int possibleAction : neighborsActions.keySet()){
 			
 			if(neighborsActions.get(possibleAction) > curBestOutcome){
 				curBestOutcome = neighborsActions.get(possibleAction);
 				curBestAction = possibleAction;
+			} else if(neighborsActions.get(possibleAction) == curBestOutcome){
+				//if they're equal, choose one with largest amount of players
+				if(neighborsActionsCount.get(possibleAction) > neighborsActionsCount.get(curBestAction)){
+					
+					curBestAction = possibleAction;
+					
+				}
+				
 			}
+			
 			
 		}
 		return curBestAction;

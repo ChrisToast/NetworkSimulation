@@ -15,9 +15,9 @@ import javafx.stage.Stage;
 
 public class Simulation {
 	
-
+	private double last = 0;
 	
-	private final static int NUM_STEPS = 1000;
+	private final static int NUM_STEPS = 10000;
 	private static final int NUM_AGENTS = 100;
 	private static final int NUM_SIMS = 1;
 	
@@ -28,7 +28,7 @@ public class Simulation {
 	
 	private double discount_factor = 0.0;
 	
-	private Random r = new Random();
+	private Random r = new Random(1234);
 	
 	
 	private static final String FILENAME_INFO = "infoRandom.txt";
@@ -186,7 +186,12 @@ public class Simulation {
 			}
 			double percentOnes = numOne / myAgentList.size();
 			
+			if(percentOnes < last && i > 10){
+				int a = 0;
+				a++;
+			}
 			
+			last = percentOnes;
 			myGrapher.addDataPoint(i, percentOnes);
 			
 			
