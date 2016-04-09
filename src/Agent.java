@@ -22,10 +22,10 @@ public class Agent {
 //	private int[][] gameMatrix = new int[][] {{1,0}, 
 //			  								  {0,5}};
 			  								  
-	private int[][] gameMatrix = new int[][] {{0,10}, 
-			  								  {10,2}}; //lower bottom right # and the end state will hover around a smaller number....linear relationship????
+//	private int[][] gameMatrix = new int[][] {{0,10}, 
+//			  								  {10,-20}}; //lower bottom right # and the end state will hover around a smaller number....linear relationship????
 			  								  
-			  								 
+	private double[][] gameMatrix;
 	
 //	private int[][] gameMatrix = new int[][] {{0,1}, 
 //	  										  {-1,0}};
@@ -41,13 +41,14 @@ public class Agent {
 	private int myId;
 	private double discountFactor;
 	
-	public Agent(int id, double discount){
+	public Agent(int id, double discount, double[][] matrix){
 		myId = id;
 		discountFactor = discount;
 		myInformationSet = new ArrayList<Agent>();
 		myInteractionSet = new ArrayList<Agent>();
 		myPastActions = new ArrayList<Integer>();
 		myPastOutcomes = new ArrayList<Double>();
+		gameMatrix = matrix;
 	}
 	
 	public void chooseNewAction(){
@@ -61,7 +62,7 @@ public class Agent {
 		double total = 0;
 		
 		for(Agent other : myInteractionSet){
-			int utility = this.interactWith(other, gameMatrix);
+			double utility = this.interactWith(other, gameMatrix);
 			total += utility;
 		}
 		myCurrentOutcome = total / (myInteractionSet.size());
@@ -72,7 +73,7 @@ public class Agent {
 	}
 	
 	
-	private int interactWith(Agent other, int[][] game){
+	private double interactWith(Agent other, double[][] game){
 		return game[myCurrentAction][other.myCurrentAction]; //TODO check indexing, ij or ji 
 	}
 	

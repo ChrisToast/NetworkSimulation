@@ -17,18 +17,26 @@ public class Simulation {
 	
 	private double last = 0;
 	
-	private final static int NUM_STEPS = 10000;
+	private final static int NUM_STEPS = 2000;
 	private static final int NUM_AGENTS = 100;
-	private static final int NUM_SIMS = 1;
+	private static final int NUM_SIMS = 10;
 	
 	private static final double CONNECT_PROB_INFO = 0.2;
 	private static final double CONNECT_PROB_INTER = 0.2;
 	
-	private static final double PROB_ONE_START = 0.5;
+	private static final double PROB_ONE_START = 0.2;
 	
-	private double discount_factor = 0.0;
+	private double discount_factor = 0.8;
 	
-	private Random r = new Random(1234);
+	private double a = 10;
+	private double b = 0;
+	private double[][] gameMatrix = new double[][] {{0,a},
+											  		{a, b}};
+	private int simNum = 0;
+	private double totalPropOnes = 0;
+	
+	
+	private Random r = new Random();
 	
 	
 	private static final String FILENAME_INFO = "infoRandom.txt";
@@ -49,7 +57,15 @@ public class Simulation {
 
 		
 		//TODO graph individual simulations
-		run();
+		//run();
+		
+		double stepAmount = 0.5;
+		for(b = -20; b <= a + stepAmount; b += stepAmount){
+			//System.out.println(b);
+			gameMatrix = new double[][] {{0,a},{a, b}};
+			
+			run();
+		}
 		
 		
 		Stage stage = new Stage();
@@ -82,7 +98,7 @@ public class Simulation {
 		
 		List<Agent> agents = new ArrayList<Agent>();
 		for(int i = 0; i < numAgents; i++){
-			agents.add(new Agent(i, discount_factor));
+			agents.add(new Agent(i, discount_factor, gameMatrix));
 		}
 		
 		for(int i = 0; i < adjacencies.size(); i++){
@@ -110,16 +126,36 @@ public class Simulation {
 	public void run(){
 		double stepEndedAt = 0;
 		
+		double propOnes = 0;
+		
+		
+		//okay
+		//So for each sim, sum up the % of 1's at each step after 1000
+		//then take the average (avgPropOnesOneSim)
+		//then take the average of all of those, which are NUM_SIMS, for a data point for each b
 		for(int i = 0; i < NUM_SIMS; i++){
 			setup();
-			stepEndedAt += runOneSimulation();
+			//stepEndedAt += runOneSimulation();
+			//simNum++;
+			
+			runOneSimulation();
+			
+			double avgPropOnesOneSim = totalPropOnes / (NUM_STEPS - 1000);			
+			
+			propOnes += avgPropOnesOneSim;
+			totalPropOnes = 0;
+			
+			
 		}
 		
 		double avgStepEndedAt = stepEndedAt / NUM_SIMS;
-		
 		//myGrapher.addDataPoint(discount_factor, avgStepEndedAt);
+		//System.out.println(this.discount_factor + ", " + avgStepEndedAt);
+	
 		
-		System.out.println("Discount: " + this.discount_factor + " Average step ended at: " + avgStepEndedAt);
+		double avgPropOnes = propOnes / NUM_SIMS;
+		myGrapher.addDataPoint(b, avgPropOnes, 0);
+		System.out.println(b + ", " + avgPropOnes);
 	}
 	
 	
@@ -191,20 +227,26 @@ public class Simulation {
 				a++;
 			}
 			
-			last = percentOnes;
-			myGrapher.addDataPoint(i, percentOnes);
+			if(i >= 1000){ //start considering for avg # 1's after 1k steps, probably stable
+				totalPropOnes += percentOnes;
+			}
+			
+			//last = percentOnes;
+			//myGrapher.addDataPoint(i, percentOnes, simNum);
 			
 			
 			
 			
 			//System.out.println("% 1 : " + percentOnes);
-			if(percentOnes == 1.0){
-				//System.out.println("Stopped with all ones at step " + i);
-				return i;
-			}
+//			if(percentOnes == 1.0){
+//				//System.out.println("Stopped with all ones at step " + i);
+//				return i;
+//			}
 			
 			
 		}
+		
+		
 		return NUM_STEPS;
 		//end state
 //		for(Agent a : myAgentList){
